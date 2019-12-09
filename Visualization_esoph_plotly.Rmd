@@ -1,0 +1,55 @@
+---
+title: "The {esoph} dataset"
+author: "Diandian Yi"
+date: "12/9/2019"
+output: ioslides_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(plotly)
+library(tidyverse)
+```
+
+## General information 
+
+The dataset {esoph} comes long in "R" package:
+
+- The data comes from a case-control study of Espophageal Cancer in France
+- Data was collected from 1175 patients with various age/alcohol/tobacco use combinations
+- Among 1175 patients, 200 cancer "cases" are in cluded. Then 975 non-cases were samples from comparable hospital populations
+
+## Description of the dataset
+
+```{r description, echo = TRUE, message= FALSE}
+sum(esoph$ncases) # 200 cancer "cases"
+sum(esoph$ncontrols) # 1175 non-cases
+str(esoph)
+```
+
+## Distribution of the observations for each age group
+
+```{r agegp}
+plot_ly(x = esoph$agegp, type = "histogram")
+```
+
+## how do the age and alcohol drinking impact getting cancer?
+
+```{r percentage_age_alcohol, warning=FALSE, message=FALSE}
+esoph_tibble <- esoph %>% as_tibble() %>% mutate(
+  percentage_cases = ncases /(ncases + ncontrols) # convert to percentage 
+) #construct the feature as the percentage of cancer cases in the dataset
+plot_ly(esoph_tibble, x = ~agegp, y = ~percentage_cases, type = "scatter", color = ~alcgp, size = ~ncases)
+```
+
+## how do the age and tobacco impact getting cancer?
+
+```{r percentage_age_tobacco, warning=FALSE, message=FALSE}
+plot_ly(esoph_tibble, x = ~agegp, y = ~percentage_cases, type = "scatter", color = ~tobgp, size = ~ncases)
+```
+
+## 3D visualization
+
+```{r 3D, warning=FALSE, message=FALSE}
+plot_ly(esoph_tibble, x = ~alcgp, y = ~tobgp, z = ~percentage_cases, type = "scatter3d", color = ~agegp)
+```
